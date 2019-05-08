@@ -19,6 +19,16 @@ public class PrintfESCManager {
 
     private String currentCode = "GBK";
 
+    /**
+     * 是否取消打印
+     */
+    private boolean isCancelPrinter = false;
+
+    //取消打印
+    public void cancelPrinter(){
+        isCancelPrinter = true;
+    }
+
     static class PrintfReceiptManagerHolder {
         private static PrintfESCManager instance = new PrintfESCManager();
     }
@@ -80,6 +90,16 @@ public class PrintfESCManager {
                     int number = escPrinterModel.getNumber();
                     int left = escPrinterModel.getLeft();
                     printfBitmaps(bitmap,left,number,multiplePrintfResultCallBack,i);
+
+                    if(isCancelPrinter){
+                        isCancelPrinter = true;
+                        if(multiplePrintfResultCallBack != null){
+                            multiplePrintfResultCallBack.printfCompleteResult
+                                    (MultiplePrintfResultCallBack.MULTIPLE_PRINTF_INTERRUPT);
+                        }
+                        return;
+                    }
+
                 }
                 if(multiplePrintfResultCallBack != null){
                     multiplePrintfResultCallBack.printfCompleteResult
@@ -169,6 +189,7 @@ public class PrintfESCManager {
                 public void getError(int error) {
                     if(callBack != null){
                         callBack.printfIndexResult(MultiplePrintfResultCallBack.MULTIPLE_PRINTF_ERROR,group, finalI + 1);
+                        isCancelPrinter = true;
                     }
                 }
 
@@ -179,6 +200,15 @@ public class PrintfESCManager {
                     }
                 }
             });
+
+            if(isCancelPrinter){
+                bluetoothManager.write("\n".getBytes());
+                if(callBack != null){
+                    callBack.printfGroupCompleteResult(group + 1,MultiplePrintfResultCallBack.MULTIPLE_PRINTF_INTERRUPT);
+                }
+                return;
+            }
+
         }
         bluetoothManager.write("\n".getBytes());
         if(callBack != null){

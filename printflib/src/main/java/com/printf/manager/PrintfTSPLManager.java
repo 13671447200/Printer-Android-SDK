@@ -21,6 +21,16 @@ import java.util.List;
 
 public class PrintfTSPLManager {
 
+    /**
+     * 是否取消打印
+     */
+    private boolean isCancelPrinter = false;
+
+    //取消打印
+    public void cancelPrinter(){
+        isCancelPrinter = true;
+    }
+
     private Context context;
     private BluetoothManager bluetoothManager;
 
@@ -75,10 +85,16 @@ public class PrintfTSPLManager {
                                 multiplePrintfResultCallBack.printfIndexResult(MultiplePrintfResultCallBack.MULTIPLE_PRINTF_SUCCESS, finalI + 1, 0);
                             } else {
                                 multiplePrintfResultCallBack.printfIndexResult(MultiplePrintfResultCallBack.MULTIPLE_PRINTF_ERROR, finalI + 1, 0);
-                                multiplePrintfResultCallBack.printfCompleteResult(MultiplePrintfResultCallBack.MULTIPLE_PRINTF_INTERRUPT);
+                                isCancelPrinter = true;
                             }
                         }
                     });
+                    if(isCancelPrinter){
+                        isCancelPrinter = false;
+                        multiplePrintfResultCallBack.printfCompleteResult
+                                (MultiplePrintfResultCallBack.MULTIPLE_PRINTF_INTERRUPT);
+                        break;
+                    }
                 }
 
             }
