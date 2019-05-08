@@ -415,6 +415,9 @@ public class BluetoothManager {
                     inputStream = bluetoothSocket.getInputStream();
                     outputStream = bluetoothSocket.getOutputStream();
                     currentDevice = device;
+
+                    registerBluetoothStateChangeReceiver();
+
                     //到了这里，就已经连接成功了 所以，这里需要做mac保存
                     String address = device.getAddress();
                     SharedPreferencesUtil.setContentByKey("bluetooth_last_mac", address, context);
@@ -512,6 +515,9 @@ public class BluetoothManager {
             outputStream = null;
             inputStream = null;
 
+            //解除广播
+            unRegisterBluetoothStateChangeReceiver();
+
             String address = currentDevice.getAddress();
             BluetoothModel bluetoothModel = bluetoothModelMap.get(address);
             bluetoothModel.setBluetoothState(BluetoothModel.PAIR);
@@ -531,6 +537,7 @@ public class BluetoothManager {
             var2.printStackTrace();
         }
     }
+
 
     /**
      * 通知连接结果
@@ -665,6 +672,52 @@ public class BluetoothManager {
             }
         });
     }
+
+    /***************** Printer-Android-SDK 1.1 start *********************/
+
+    class BluetoothStateBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if (currentDevice != null && device != null && device.equals(currentDevice)) {
+                if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) { //蓝牙连接已经断开
+                    close();
+                } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                    if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {//蓝牙关闭
+                        close();
+                    }
+                }
+            }
+        }
+    }
+
+    private BluetoothStateBroadcastReceiver bluetoothStateBroadcastReceiver = null;
+
+    /**
+     * 注册蓝牙状态改变广播
+     */
+    private void registerBluetoothStateChangeReceiver(){
+        if(bluetoothStateBroadcastReceiver == null){
+            bluetoothStateBroadcastReceiver = new BluetoothStateBroadcastReceiver();
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        context.registerReceiver(bluetoothStateBroadcastReceiver, filter);
+    }
+
+    /**
+     * 解除蓝牙状态改变广播
+     */
+    private void unRegisterBluetoothStateChangeReceiver(){
+        if(bluetoothStateBroadcastReceiver != null){
+            context.unregisterReceiver(bluetoothStateBroadcastReceiver);
+            bluetoothStateBroadcastReceiver = null;
+        }
+    }
+
+    /***************** Printer-Android-SDK 1.1 end *********************/
 
     /**
      * 扫描到设备的蓝牙回调监听

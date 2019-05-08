@@ -1,6 +1,7 @@
 package com.printer.sdk;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,23 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        BluetoothManager.getInstance(MainActivity.this).addConnectResultCallBack(new BluetoothManager.ConnectResultCallBack() {
+            @Override
+            public void success(BluetoothDevice device) {
+                ToastUtils.ToastText(MainActivity.this,"蓝牙连接成功");
+            }
+
+            @Override
+            public void close(BluetoothDevice device) {
+                ToastUtils.ToastText(MainActivity.this,"蓝牙连接关闭");
+            }
+
+            @Override
+            public void fail(BluetoothDevice device) {
+                ToastUtils.ToastText(MainActivity.this,"蓝牙连接失败");
+            }
+        });
 
         findViewById(R.id.btn_main_test_label).setOnClickListener(new View.OnClickListener() {
             @Override

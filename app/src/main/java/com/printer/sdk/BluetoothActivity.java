@@ -119,5 +119,7 @@ public class BluetoothActivity extends Activity{
                 .removeScanBlueCallBack(scanBlueCallBack);
         BluetoothManager.getInstance(BluetoothActivity.this)
                 .removeConnectResultCallBack(connectResultCallBack);
+        BluetoothManager.getInstance(BluetoothActivity.this)
+                .stopSearch();
     }
 }
