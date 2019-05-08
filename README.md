@@ -12,5 +12,19 @@
 
 ④：当前SDK，还支持得到打印机的信息。连接蓝牙之后，可一键得到打印机的序列号、型号、纸张类型、纸张状态、指令类型。
 
-详细文档说明下载地址：https://www.mhtclouding.com/MHT/MHTFile/other/PrinterSDK.pdf
+## 如何使用？
+  第一步：在项目更目录的gradle文件，增加jitpack 的依赖 
+  allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+  
+  第二步：在项目需要的地方，添加下面依赖
+  dependencies {
+	   implementation 'com.github.13671447200:Printer-SDK:Tag'
+	}
+  
+  详细文档说明下载地址：https://www.mhtclouding.com/MHT/MHTFile/other/PrinterSDK.pdf
 
