@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.13671447200'
+
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    task makejar(type: Copy){
+        //删除原来的jar包
+        delete 'libs/test.jar'
+
+        //从该目录下拷贝生成的jar包(各版本AndroidStudio目录可能不一样最好自己检查一遍目录)
+        from('build/intermediates/intermediate-jars/release/')
+
+        //拷贝到该目录
+        into('libs')
+
+        include('classes.jar')
+        //命名文件为test.jar
+        rename('classes.jar','test.jar')
+    }
+
+    makejar.dependsOn(build)
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:27.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}

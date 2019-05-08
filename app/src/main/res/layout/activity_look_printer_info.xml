@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="序列号：" />
+
+            <TextView
+                android:id="@+id/tv_look_printer_info_serial_number"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="型号：" />
+
+            <TextView
+                android:id="@+id/tv_look_printer_info_model"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="纸张状态：" />
+
+            <TextView
+                android:id="@+id/tv_look_printer_info_paper_state"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="纸张类型：" />
+
+            <TextView
+                android:id="@+id/tv_look_printer_info_paper_type"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="指令类型：" />
+
+            <TextView
+                android:id="@+id/tv_look_printer_info_cmd_type"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/btn_main_to_tspl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="TSPL" />
+
+        <Button
+            android:id="@+id/btn_main_to_esc"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="ESC" />
+
+        <Button
+            android:id="@+id/btn_main_to_cpcl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="CPCL" />
+
+        <Button
+            android:id="@+id/btn_main_to_gap"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="GAP" />
+
+        <Button
+            android:id="@+id/btn_main_to_continuity"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Receipt" />
+    </LinearLayout>
+</ScrollView>

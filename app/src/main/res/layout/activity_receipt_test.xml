@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_receipt_test_table"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="测试表格打印" />
+
+        <Button
+            android:id="@+id/btn_receipt_test_bold"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="测试字体加粗" />
+
+        <Button
+            android:id="@+id/btn_receipt_test_extra_large_font_size"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="测试特大字体" />
+
+        <Button
+            android:id="@+id/btn_receipt_test_large_font_size"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="测试大字体" />
+
+        <Button
+            android:id="@+id/btn_printf_test_page"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="打印测试页" />
+
+        <Button
+            android:id="@+id/btn_printf_init_printer"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="初始化打印机" />
+
+        <Button
+            android:id="@+id/btn_printf_same_bitmap"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="打印一张图片" />
+
+        <Button
+            android:id="@+id/btn_printf_continuity_same_bitmap"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="连续打印同一张图片" />
+
+        <Button
+            android:id="@+id/btn_printf_continuity_difference_bitmap"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="连续打印多张不同图片" />
+
+        <Button
+            android:id="@+id/btn_printf_one_barcode"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="测试一维码打印" />
+
+        <Button
+            android:id="@+id/btn_printf_tow_barcode"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="测试二维码打印" />
+    </LinearLayout>
+</ScrollView>

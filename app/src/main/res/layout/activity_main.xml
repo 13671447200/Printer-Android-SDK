@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_main_test_label"
+        android:text="测试一下标签"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/btn_main_test_receipt"
+        android:text="测试一下小票"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/btn_main_look_print_info"
+        android:text="查看打印机的状态"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/btn_main_connect_blue"
+        android:text="连接蓝牙"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+
+</LinearLayout>
