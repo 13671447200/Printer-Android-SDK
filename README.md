@@ -30,5 +30,5 @@
 	  }
   ```
   
-  详细文档说明下载地址：https://www.mhtclouding.com/MHT/MHTFile/other/PrinterSDK.pdf
+  详细文档说明下载地址：https://www.mhtclouding.com/MHT/MHTFile/other/PrinterAndroidSDK.pdf
 
