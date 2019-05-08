@@ -15,10 +15,15 @@
 ## 如何使用？
   第一步：在项目更目录的gradle文件，增加jitpack 的依赖 
   allprojects {
+		
 		repositories {
+		
 			...
+			
 			maven { url 'https://jitpack.io' }
+			
 		}
+		
 	}
   
   第二步：在项目需要的地方，添加下面依赖
