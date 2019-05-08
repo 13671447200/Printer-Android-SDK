@@ -1,4 +1,4 @@
-# Printer-SDK
+# Printer-Android-SDK
 
 [![](https://jitpack.io/v/13671447200/Printer-SDK.svg)](https://jitpack.io/#13671447200/Printer-SDK)
 
@@ -26,7 +26,7 @@
   第二步：在项目需要的地方，添加下面依赖<br>
    ```java
 	  dependencies {
-		implementation 'com.github.13671447200:Printer-SDK:V1.0'
+		implementation 'com.github.13671447200:Printer-Android-SDK:V1.0'
 	  }
   ```
   
