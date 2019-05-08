@@ -82,7 +82,7 @@ public class LabelActivity extends Activity {
                     tSPLPrinterModels.add(tSPLPrinterModel);
                 }
                 PrintfTSPLManager.getInstance(LabelActivity.this)
-                        .printfLabels(tSPLPrinterModels, new MultiplePrintfResultCallBack() {
+                        .printfLabelsAsync(tSPLPrinterModels, new MultiplePrintfResultCallBack() {
                             @Override
                             public void printfIndexResult(int result, int group,int index) {
                                 Log.e("TAG","第" + group + "组的第"+ index + "张的打印结果是：" + result);
