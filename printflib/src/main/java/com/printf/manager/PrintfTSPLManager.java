@@ -51,7 +51,7 @@ public class PrintfTSPLManager {
         return write;
     }
 
-    public void printfLabels(final List<TSPLPrinterModel> TSPLPrinterModels, final MultiplePrintfResultCallBack multiplePrintfResultCallBack) {
+    public void printfLabelsAsync(final List<TSPLPrinterModel> TSPLPrinterModels, final MultiplePrintfResultCallBack multiplePrintfResultCallBack) {
         if (TSPLPrinterModels == null || TSPLPrinterModels.size() <= 0) {
             return;
         }
