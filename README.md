@@ -14,17 +14,17 @@
 
 ## 如何使用？
   第一步：在项目更目录的gradle文件，增加jitpack 的依赖 
-  allprojects {\<br>
-	repositories {\<br>
-		...\<br>
-		maven { url 'https://jitpack.io' }\<br>	
-	}\<br>	
+  allprojects {<br>
+	repositories {<br>
+		...<br>
+		maven { url 'https://jitpack.io' }<br>	
+	}<br>	
   }
   
   第二步：在项目需要的地方，添加下面依赖
-  dependencies {\<br>
-	implementation 'com.github.13671447200:Printer-SDK:Tag'\<br>
-  }\<br>
+  dependencies {<br>
+	implementation 'com.github.13671447200:Printer-SDK:Tag'<br>
+  }<br>
   
   详细文档说明下载地址：https://www.mhtclouding.com/MHT/MHTFile/other/PrinterSDK.pdf
 
