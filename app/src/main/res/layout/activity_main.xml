@@ -23,8 +23,21 @@
         android:layout_height="50dp" />
 
     <Button
+        android:id="@+id/btn_main_test_apl"
+        android:text="测试一下 apl"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+
+    <Button
         android:id="@+id/btn_main_connect_blue"
         android:text="连接蓝牙"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/btn_main_send_content"
+        android:text="发送数据"
         android:layout_width="match_parent"
         android:layout_height="50dp" />
 

@@ -2,8 +2,39 @@ package com.printf.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 public class ImageUtil {
+
+    /**
+     * 处理图片的大小
+     *
+     * @param bitmap
+     * @param newBitmapW
+     * @param newBitmapH
+     * @return
+     */
+    public static Bitmap handleBitmap(Bitmap bitmap, float newBitmapW, float newBitmapH, int rotate) {
+
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+
+        // 计算缩放比例
+        float scaleWidth = ((float) newBitmapW) / width;
+        float scaleHeight = ((float) newBitmapH) / height;
+
+        // 取得想要缩放的matrix参数
+        Matrix matrix = new Matrix();
+        //先旋转，后缩小
+        if(rotate % 360 != 0) {
+            matrix.setRotate(rotate, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+        }
+
+        matrix.postScale(scaleWidth, scaleHeight);
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+        return bitmap;
+    }
 
     /**
      * 处理半色调图片

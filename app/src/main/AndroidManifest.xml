@@ -21,7 +21,8 @@
         <activity android:name=".LabelActivity"/>
         <activity android:name=".LookPrinterInfoActivity"/>
         <activity android:name=".ReceiptActivity"/>
-
+        <activity android:name=".SendContentActivity"/>
+        <activity android:name=".APLActivity"/>
     </application>
 
 </manifest>

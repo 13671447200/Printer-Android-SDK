@@ -4,7 +4,7 @@ import android.content.Context;
 
 public class ParameterUtil {
 
-    static class TowValuedType{
+    public static class TowValuedType{
         //无
         public static int NO = 1;
         //给予错误抖动的算法

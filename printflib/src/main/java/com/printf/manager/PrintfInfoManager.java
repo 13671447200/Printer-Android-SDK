@@ -52,6 +52,44 @@ public class PrintfInfoManager {
     }
 
     /**
+     * 开始得到P28的蓝牙MAC
+     */
+    private void getBlueMacP28(final GetPrinterCmdCallBack getPrinterCmdCallBack){
+
+        if (!bluetoothManager.isConnect()) {
+            if (getPrinterCmdCallBack != null) {
+                getPrinterCmdCallBack.getError(3);
+            }
+            return;
+        }
+
+        byte[] bytes = {0x10, 0x7c, 0x00};
+
+        bluetoothManager.sendBytesToRead(bytes, 500, 20, new BluetoothManager.SendBytesToReadCallBack() {
+            @Override
+            public void callBytes(byte[] tempBytes) {
+                String mac = new String(tempBytes);
+                Log.e("TAG","mac:" + mac);
+
+                if (getPrinterCmdCallBack != null) {
+                    getPrinterCmdCallBack.getSuccess();
+                    getPrinterCmdCallBack.getComplete();
+                }
+            }
+
+            @Override
+            public void callError(int error) {
+                if (getPrinterCmdCallBack != null) {
+                    getPrinterCmdCallBack.getError(error);
+                    getPrinterCmdCallBack.getComplete();
+                }
+            }
+        });
+
+
+    }
+
+    /**
      * 开始得到机器信息
      */
     public void beginGetPrinterInfoAsync(final GetAllPrinterInfoCallBack getAllPrinterInfoCallBack) {
@@ -62,6 +100,8 @@ public class PrintfInfoManager {
 
                 synchronized (BluetoothManager.class) {
 
+                    final boolean[] isContinue = {true};
+
                     //得到当前打印机的序列号
                     getPrinterSerialNumber(new GetPrinterCmdCallBack() {
                         @Override
@@ -71,14 +111,29 @@ public class PrintfInfoManager {
 
                         @Override
                         public void getError(int error) {
+                            isContinue[0] = false;
                             Log.e(TAG, "得到序列号时失败 错误码：" + error);
                         }
 
                         @Override
                         public void getSuccess() {
+                            isContinue[0] = true;
                             Log.e(TAG, "序列号：" + printerInfo.getSerialNumber());
                         }
                     });
+
+                    if(!isContinue[0]){
+                        ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getAllPrinterInfoCallBack != null) {
+                                    getAllPrinterInfoCallBack.getError(1);
+                                    getAllPrinterInfoCallBack.getComplete();
+                                }
+                            }
+                        });
+                        return;
+                    }
 
                     //得到当前打印机的型号
                     getPrinterModel(new GetPrinterCmdCallBack() {
@@ -89,15 +144,30 @@ public class PrintfInfoManager {
 
                         @Override
                         public void getError(int error) {
+                            isContinue[0] = false;
                             Log.e(TAG, "得到打印机型号时失败 错误码：" + error);
 
                         }
 
                         @Override
                         public void getSuccess() {
+                            isContinue[0] = true;
                             Log.e(TAG, "打印机型号：" + printerInfo.getPrinterModel());
                         }
                     });
+
+                    if(!isContinue[0]){
+                        ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getAllPrinterInfoCallBack != null) {
+                                    getAllPrinterInfoCallBack.getError(2);
+                                    getAllPrinterInfoCallBack.getComplete();
+                                }
+                            }
+                        });
+                        return;
+                    }
 
                     //得到当前打印机的纸张类型
                     getPrinterPaperType(new GetPrinterCmdCallBack() {
@@ -108,14 +178,29 @@ public class PrintfInfoManager {
 
                         @Override
                         public void getError(int error) {
+                            isContinue[0] = false;
                             Log.e(TAG, "得到纸张类型时失败 错误码：" + error);
                         }
 
                         @Override
                         public void getSuccess() {
+                            isContinue[0] = true;
                             Log.e(TAG, "纸张类型：" + printerInfo.getPaperType());
                         }
                     });
+
+                    if(!isContinue[0]){
+                        ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getAllPrinterInfoCallBack != null) {
+                                    getAllPrinterInfoCallBack.getError(3);
+                                    getAllPrinterInfoCallBack.getComplete();
+                                }
+                            }
+                        });
+                        return;
+                    }
 
                     //得到当前打印机的指令类型
                     getPrinterCmdType(new GetPrinterCmdCallBack() {
@@ -126,15 +211,30 @@ public class PrintfInfoManager {
 
                         @Override
                         public void getError(int error) {
+                            isContinue[0] = false;
                             Log.e(TAG, "得到打印机的指令类型时失败 错误码：" + error);
                         }
 
                         @Override
                         public void getSuccess() {
+                            isContinue[0] = true;
                             Log.e(TAG, "指令类型：" + printerInfo.getCmdType());
 
                         }
                     });
+
+                    if(!isContinue[0]){
+                        ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getAllPrinterInfoCallBack != null) {
+                                    getAllPrinterInfoCallBack.getError(4);
+                                    getAllPrinterInfoCallBack.getComplete();
+                                }
+                            }
+                        });
+                        return;
+                    }
 
                     //得到当前的纸张状态 (非纸张类型)
                     getPrinterPaperState(new GetPrinterCmdCallBack() {
@@ -145,24 +245,38 @@ public class PrintfInfoManager {
 
                         @Override
                         public void getError(int error) {
+                            isContinue[0] = false;
                             Log.e(TAG, "得到打印机的纸张状态时失败 错误码：" + error);
+                            ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (getAllPrinterInfoCallBack != null) {
+                                        getAllPrinterInfoCallBack.getError(5);
+                                    }
+                                }
+                            });
                         }
 
                         @Override
                         public void getSuccess() {
+                            isContinue[0] = true;
                             Log.e(TAG, "纸张状态：" + printerInfo.getPaperState());
+                        }
+                    });
+                    ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getAllPrinterInfoCallBack != null) {
+                                if(isContinue[0]){
+                                    getAllPrinterInfoCallBack.getSuccess();
+                                }
+                                getAllPrinterInfoCallBack.getComplete();
+                            }
                         }
                     });
                 }
 
-                ThreadExecutorManager.getInstance(context).getHandler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (getAllPrinterInfoCallBack != null) {
-                            getAllPrinterInfoCallBack.getComplete();
-                        }
-                    }
-                });
+
             }
         });
     }
@@ -408,7 +522,7 @@ public class PrintfInfoManager {
         bluetoothManager.sendBytesToRead(bytes, 500, 20, new BluetoothManager.SendBytesToReadCallBack() {
             @Override
             public void callBytes(byte[] bytes) {
-                if (bytes.length == 1) {
+                if (bytes.length >= 1) {
                     if (bytes[0] == 0x12) {//正常
                         printerInfo.setPaperState(PrinterInfo.PaperState.NORMAL_PAPER_STATE);
                     } else {
@@ -788,6 +902,21 @@ public class PrintfInfoManager {
     public interface GetAllPrinterInfoCallBack {
         //完成
         void getComplete();
+
+        //成功
+        void getSuccess();
+
+        /**
+         * 失败
+         * @param error 失败码
+         * 1 得到序列号失败
+         * 2 得到打印机的型号失败
+         * 3 得到打印机的纸张类型失败
+         * 4 得到打印机的指令类型失败
+         * 5 得到当前的纸张状态失败
+         */
+        void getError(int error);
+
     }
 
     public interface GetPrinterCmdCallBack {

@@ -13,7 +13,7 @@ public class BarcodeUtil {
         public static final byte ITF = 5;
         public static final byte CODABAR = 6;
         public static final byte CODE93 = 72;
-        public static final byte CODE128 = 73;
+        public static final byte CODE128 = 07;
         public static final byte PDF417 = 100;
         public static final byte DATAMATRIX = 101;
         public static final byte QRCODE = 102;
@@ -50,81 +50,8 @@ public class BarcodeUtil {
             case 72:
                 realCommand = this.getBarcodeCommand1(this.content, this.barcodeType, (byte)this.content.length());
                 break;
-            case 73:
-                byte[] sb = new byte[1024];
-                j = 0;
-                int temp = this.content.length();
-                int tempLength = temp;
-                char[] charArray = this.content.toCharArray();
-                boolean preHasCodeA = false;
-                boolean preHasCodeB = false;
-                boolean preHasCodeC = false;
-                boolean needCodeC = false;
-
-                for(int i = 0; i < temp; ++i) {
-                    byte a = (byte)charArray[i];
-                    if (a >= 0 && a <= 31) {
-                        if (i == 0 || !preHasCodeA) {
-                            sb[j++] = 123;
-                            sb[j++] = 65;
-                            preHasCodeA = true;
-                            preHasCodeB = false;
-                            preHasCodeC = false;
-                            tempLength += 2;
-                        }
-
-                        sb[j++] = a;
-                    } else {
-                        if (a >= 48 && a <= 57) {
-                            if (!preHasCodeC) {
-                                for(int b = 1; b < 9; ++b) {
-                                    if (i + b == temp || !Util.isNum((byte)charArray[i + b])) {
-                                        needCodeC = false;
-                                        break;
-                                    }
-
-                                    if (b == 8) {
-                                        needCodeC = true;
-                                    }
-                                }
-                            }
-
-                            if (needCodeC) {
-                                if (!preHasCodeC) {
-                                    sb[j++] = 123;
-                                    sb[j++] = 67;
-                                    preHasCodeA = false;
-                                    preHasCodeB = false;
-                                    preHasCodeC = true;
-                                    tempLength += 2;
-                                }
-
-                                if (i != temp - 1) {
-                                    byte var16 = (byte)charArray[i + 1];
-                                    if (Util.isNum(var16)) {
-                                        sb[j++] = (byte)((a - 48) * 10 + (var16 - 48));
-                                        --tempLength;
-                                        ++i;
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!preHasCodeB) {
-                            sb[j++] = 123;
-                            sb[j++] = 66;
-                            preHasCodeA = false;
-                            preHasCodeB = true;
-                            preHasCodeC = false;
-                            tempLength += 2;
-                        }
-
-                        sb[j++] = a;
-                    }
-                }
-
-                realCommand = this.getBarcodeCommand1(new String(sb, 0, tempLength), this.barcodeType, (byte)tempLength);
+            case BarcodeType.CODE128:
+                realCommand = this.getBarcodeCommandCode128(this.content);
                 break;
             case 100:
             case 101:
@@ -136,6 +63,61 @@ public class BarcodeUtil {
         }
 
         return realCommand;
+    }
+
+    private byte[] getBarcodeCommandCode128(String content) {
+        byte index = 0;
+
+        byte[] tmpByte;
+        try {
+            if (this.charsetName != "") {
+                tmpByte = content.getBytes(this.charsetName);
+            } else {
+                tmpByte = content.getBytes();
+            }
+        } catch (UnsupportedEncodingException var8) {
+            var8.printStackTrace();
+            return null;
+        }
+
+        byte[] command = new byte[tmpByte.length + 13];
+        int var8 = index + 1;
+        command[index] = 29;
+        command[var8++] = 119;
+        if (this.param1 >= 2 && this.param1 <= 6) {
+            command[var8++] = (byte)this.param1;
+        } else {
+            command[var8++] = 2;
+        }
+
+        command[var8++] = 29;
+        command[var8++] = 104;
+        if (this.param2 >= 1 && this.param2 <= 255) {
+            command[var8++] = (byte)this.param2;
+        } else {
+            command[var8++] = -94;
+        }
+
+        command[var8++] = 29;
+        command[var8++] = 72;
+        if (this.param3 >= 0 && this.param3 <= 3) {
+            command[var8++] = (byte)this.param3;
+        } else {
+            command[var8++] = 0;
+        }
+
+        command[var8++] = 29;
+        command[var8++] = 107;
+
+        command[var8++] = 0x07;
+
+        for(int j = 0; j < tmpByte.length; ++j) {
+            command[var8++] = tmpByte[j];
+        }
+
+        command[var8++] = 0;
+
+        return command;
     }
 
     private byte[] getBarcodeCommand1(String content, byte... byteArray) {

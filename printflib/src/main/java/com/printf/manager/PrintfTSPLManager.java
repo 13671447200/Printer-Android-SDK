@@ -2,14 +2,13 @@ package com.printf.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.os.Environment;
 
 import com.printf.interfaceCall.MultiplePrintfResultCallBack;
 import com.printf.interfaceCall.PrintfResultCallBack;
-import com.printf.model.PrintfModel;
 import com.printf.model.TSPLPrinterModel;
+import com.printf.model.TSPLSmallBitmapModel;
 import com.printf.utils.ImageUtil;
 import com.printf.utils.Util;
 
@@ -114,29 +113,29 @@ public class PrintfTSPLManager {
         int labelW = tSPLPrinterModel.getLabelW();
         int labelH = tSPLPrinterModel.getLabelH();
 
-        List<PrintfModel> printfModels = tSPLPrinterModel.getPrintfModels();
+        List<TSPLSmallBitmapModel> TSPLSmallBitmapModels = tSPLPrinterModel.getTSPLSmallBitmapModels();
 
-        for (int i = 0; i < printfModels.size(); i++) {
+        for (int i = 0; i < TSPLSmallBitmapModels.size(); i++) {
 
-            PrintfModel printfModel = printfModels.get(i);
+            TSPLSmallBitmapModel tSPLSmallBitmapModel = TSPLSmallBitmapModels.get(i);
 
-            int rotate = printfModel.getRotate();
+            int rotate = tSPLSmallBitmapModel.getRotate();
 
-            int bitmapWMM = printfModel.getBitmapW();
-            int bitmapHMM = printfModel.getBitmapH();
+            float bitmapWMM = tSPLSmallBitmapModel.getBitmapW();
+            float bitmapHMM = tSPLSmallBitmapModel.getBitmapH();
 
-            float left = printfModel.getX();
-            float top = printfModel.getY();
+            float left = tSPLSmallBitmapModel.getX();
+            float top = tSPLSmallBitmapModel.getY();
 
             //旋转的点
-            PointF rotatePoint = printfModel.getRotatePoint();
+            PointF rotatePoint = tSPLSmallBitmapModel.getRotatePoint();
             if (rotatePoint == null) {
                 rotatePoint = new PointF();
                 rotatePoint.x = (left + bitmapWMM / 2);
                 rotatePoint.y = (top + bitmapHMM / 2);
             }
 
-            Bitmap bitmap = handleBitmap(printfModel.getBitmap(),
+            Bitmap bitmap = ImageUtil.handleBitmap(tSPLSmallBitmapModel.getBitmap(),
                     bitmapWMM * tSPLPrinterModel.getMM_TO_PX(),
                     bitmapHMM * tSPLPrinterModel.getMM_TO_PX(), rotate + printfDirection + 180);
             //求出四个点
@@ -188,9 +187,9 @@ public class PrintfTSPLManager {
             }
 
             //处理旋转角度
-            if (rotate == PrintfModel.RotateAngle.NINETY_ANGLE
-                    || rotate == PrintfModel.RotateAngle.TOW_HUNDRED_SEVENTY) {
-                int tempRotate = rotate == PrintfModel.RotateAngle.NINETY_ANGLE ? 90 : 270;
+            if (rotate == TSPLSmallBitmapModel.RotateAngle.NINETY_ANGLE
+                    || rotate == TSPLSmallBitmapModel.RotateAngle.TOW_HUNDRED_SEVENTY) {
+                int tempRotate = rotate == TSPLSmallBitmapModel.RotateAngle.NINETY_ANGLE ? 90 : 270;
                 leftTopPoint = Util.getRotatePointF(rotatePoint, leftTopPoint, tempRotate);
                 leftBottomPoint = Util.getRotatePointF(rotatePoint, leftBottomPoint, tempRotate);
                 rightBottomPoint = Util.getRotatePointF(rotatePoint, rightBottomPoint, tempRotate);
@@ -199,19 +198,19 @@ public class PrintfTSPLManager {
 
             //判断用到哪个点
             PointF usePoint = null;
-            if (rotate == PrintfModel.RotateAngle.NINETY_ANGLE) {
+            if (rotate == TSPLSmallBitmapModel.RotateAngle.NINETY_ANGLE) {
                 usePoint = leftBottomPoint;
-            } else if (rotate == PrintfModel.RotateAngle.ONE_HUNDRED_EIGHTY) {
+            } else if (rotate == TSPLSmallBitmapModel.RotateAngle.ONE_HUNDRED_EIGHTY) {
                 usePoint = rightBottomPoint;
-            } else if (rotate == PrintfModel.RotateAngle.TOW_HUNDRED_SEVENTY) {
+            } else if (rotate == TSPLSmallBitmapModel.RotateAngle.TOW_HUNDRED_SEVENTY) {
                 usePoint = rightTopPoint;
             } else {
                 usePoint = leftTopPoint;
             }
 
             //图片是否需要交换宽高
-            int newBitmapH = 0;
-            int newBitmapW = 0;
+            float newBitmapH = 0;
+            float newBitmapW = 0;
             int judgeRotate = (rotate + printfDirection + 180) % 360;
             if (judgeRotate == 90 || judgeRotate == 270) {
                 newBitmapH = bitmapWMM;
@@ -232,11 +231,11 @@ public class PrintfTSPLManager {
                 newLabelH = labelH;
                 newLabelW = labelW;
             }
-            printfModel.setBitmap(bitmap);
-            printfModel.setX(newLabelW - (usePoint.x + newBitmapW));
-            printfModel.setY(newLabelH - (usePoint.y + newBitmapH));
-            printfModel.setBitmapW(newBitmapW);
-            printfModel.setBitmapH(newBitmapH);
+            tSPLSmallBitmapModel.setBitmap(bitmap);
+            tSPLSmallBitmapModel.setX(newLabelW - (usePoint.x + newBitmapW));
+            tSPLSmallBitmapModel.setY(newLabelH - (usePoint.y + newBitmapH));
+            tSPLSmallBitmapModel.setBitmapW(newBitmapW);
+            tSPLSmallBitmapModel.setBitmapH(newBitmapH);
         }
 
         //如果 打印方向 是 90° 与 180° 则需要交换宽高
@@ -276,12 +275,12 @@ public class PrintfTSPLManager {
         initCanvas(TSPLPrinterModel.getLabelW(), TSPLPrinterModel.getLabelH());
         clearCanvas();
 
-        List<PrintfModel> printfModels = TSPLPrinterModel.getPrintfModels();
-        for (int i = 0; i < printfModels.size(); i++) {
-            PrintfModel printfModel = printfModels.get(i);
-            int x = (int) (printfModel.getX() * TSPLPrinterModel.getMM_TO_PX());
-            int y = (int) (printfModel.getY() * TSPLPrinterModel.getMM_TO_PX());
-            printBitmap(x, y, printfModel.getBitmap(), printfModel.getThreshold());
+        List<TSPLSmallBitmapModel> TSPLSmallBitmapModels = TSPLPrinterModel.getTSPLSmallBitmapModels();
+        for (int i = 0; i < TSPLSmallBitmapModels.size(); i++) {
+            TSPLSmallBitmapModel TSPLSmallBitmapModel = TSPLSmallBitmapModels.get(i);
+            int x = (int) (TSPLSmallBitmapModel.getX() * TSPLPrinterModel.getMM_TO_PX());
+            int y = (int) (TSPLSmallBitmapModel.getY() * TSPLPrinterModel.getMM_TO_PX());
+            printBitmap(x, y, TSPLSmallBitmapModel.getBitmap(), TSPLSmallBitmapModel.getThreshold());
         }
 
         beginPrintf(1, TSPLPrinterModel.getPrintfNumber());
@@ -313,7 +312,14 @@ public class PrintfTSPLManager {
         ThreadExecutorManager.getInstance(context).getCachedThreadPool().execute(new Runnable() {
             @Override
             public void run() {
-                printfLabel(tSPLPrinterModel1,printfResultCallBack);
+                try {
+                    printfLabel(tSPLPrinterModel1, printfResultCallBack);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    if(printfResultCallBack != null){
+                        printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_CMD_ERROR);
+                    }
+                }
             }
         });
 
@@ -343,34 +349,6 @@ public class PrintfTSPLManager {
             e.printStackTrace();
         }
     }
-
-    /**
-     * 求出当前图片的半色调风格
-     */
-    public int getThreshold(Bitmap img) {
-        int width = img.getWidth();//获取位图的宽  
-        int height = img.getHeight();//获取位图的高  
-
-        int[] pixels = new int[width * height]; //通过位图的大小创建像素点数组  
-
-        img.getPixels(pixels, 0, width, 0, 0, width, height);
-        long total = 0;
-        long position = 0;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                int grey = pixels[width * i + j];
-                int red = ((grey & 0x00FF0000) >> 16);
-                int green = ((grey & 0x0000FF00) >> 8);
-                int blue = (grey & 0x000000FF);
-                int tempThreshold = (int) (0.29900 * red + 0.58700 * green + 0.11400 * blue); // 灰度转化公式;
-
-                total += tempThreshold;
-            }
-        }
-        long l = total / width / height;
-        return (int) l;
-    }
-
 
     /**
      * 打印图片
@@ -434,32 +412,6 @@ public class PrintfTSPLManager {
         sendBytes(bytes);
     }
 
-    /**
-     * 处理图片的大小
-     *
-     * @param bitmap
-     * @param newBitmapW
-     * @param newBitmapH
-     * @return
-     */
-    private Bitmap handleBitmap(Bitmap bitmap, int newBitmapW, int newBitmapH, int rotate) {
-
-        int height = bitmap.getHeight();
-        int width = bitmap.getWidth();
-
-        // 计算缩放比例
-        float scaleWidth = ((float) newBitmapW) / width;
-        float scaleHeight = ((float) newBitmapH) / height;
-
-        // 取得想要缩放的matrix参数
-        Matrix matrix = new Matrix();
-        //先旋转，后缩小
-        matrix.setRotate(rotate, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-        matrix.postScale(scaleWidth, scaleHeight);
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-        return bitmap;
-    }
 
     /**
      * 图片二值化

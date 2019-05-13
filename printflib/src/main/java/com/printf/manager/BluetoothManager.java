@@ -218,7 +218,8 @@ public class BluetoothManager {
             for(int i = 0; i < bytes.length; i++){
                 sb.append(bytes[i]).append(",");
             }
-
+            read();
+            read();
             Log.e("TAG","我要发送数据了" + sb.toString());
 
             int write = write(bytes);
@@ -323,8 +324,12 @@ public class BluetoothManager {
         }
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(enableBtIntent);
             return 2;
+        }
+        if(bluetoothAdapter.isDiscovering()){
+            bluetoothAdapter.cancelDiscovery();
         }
         //注册广播
         registerBluetoothReceiver();
@@ -347,7 +352,7 @@ public class BluetoothManager {
     /**
      * 配对蓝牙
      */
-    public void pairBluetooth(BluetoothDevice device) {
+    public void pairBluetooth(final BluetoothDevice device) {
 
         if (device == null) {
             Log.e("TAG", "device = null");
@@ -358,78 +363,86 @@ public class BluetoothManager {
             bluetoothAdapter.cancelDiscovery();
         }
 
-        //如果没有配对
-        if (device.getBondState() == BluetoothDevice.BOND_NONE) {
-            //注册配对广播
-            IntentFilter boundFilter =
-                    new IntentFilter("android.bluetooth.device.action.BOND_STATE_CHANGED");
-            context.registerReceiver(boundDeviceReceiver, boundFilter);
-            Method e = null;
-            try {
-                e = BluetoothDevice.class.getMethod("createBond");
-                boolean isSuccess = (boolean) e.invoke(device);
-                if (isSuccess) {
-                    isPairing = true;
-                }
-            } catch (NoSuchMethodException e1) {
-                e1.printStackTrace();
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (InvocationTargetException e1) {
-                e1.printStackTrace();
-            }
+        ThreadExecutorManager.getInstance(context).getCachedThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (BluetoothManager.class) {
+                    //如果没有配对
+                    if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                        //注册配对广播
+                        IntentFilter boundFilter =
+                                new IntentFilter("android.bluetooth.device.action.BOND_STATE_CHANGED");
+                        context.registerReceiver(boundDeviceReceiver, boundFilter);
+                        Method e = null;
+                        try {
+                            e = BluetoothDevice.class.getMethod("createBond");
+                            boolean isSuccess = (boolean) e.invoke(device);
+                            if (isSuccess) {
+                                isPairing = true;
+                            }
+                        } catch (NoSuchMethodException e1) {
+                            e1.printStackTrace();
+                        } catch (IllegalAccessException e1) {
+                            e1.printStackTrace();
+                        } catch (InvocationTargetException e1) {
+                            e1.printStackTrace();
+                        }
 
-        }
-        //已经配对
-        else if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-            boolean isHasError = false;
-            try {
-                bluetoothSocket
-                        = device.createRfcommSocketToServiceRecord(PRINTER_UUID);
-                bluetoothSocket.connect();
-            } catch (Exception e) {
-                e.printStackTrace();
+                    }
+                    //已经配对
+                    else if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        boolean isHasError = false;
+                        try {
+                            bluetoothSocket
+                                    = device.createRfcommSocketToServiceRecord(PRINTER_UUID);
+                            bluetoothSocket.connect();
+                        } catch (Exception e) {
+                            e.printStackTrace();
 
-                if (bluetoothSocket != null) {
-                    try {
-                        bluetoothSocket.close();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                            if (bluetoothSocket != null) {
+                                try {
+                                    bluetoothSocket.close();
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+
+                            isHasError = reTryConnect();
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            if (isHasError) {
+                                isHasError = reTryConnect();
+                            }
+                        }
+
+                        if (!isHasError) {
+                            try {
+                                inputStream = bluetoothSocket.getInputStream();
+                                outputStream = bluetoothSocket.getOutputStream();
+                                currentDevice = device;
+
+                                registerBluetoothStateChangeReceiver();
+
+                                //到了这里，就已经连接成功了 所以，这里需要做mac保存
+                                String address = device.getAddress();
+                                SharedPreferencesUtil.setContentByKey("bluetooth_last_mac", address, context);
+                            } catch (IOException e) {
+                                isHasError = true;
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //通知连接结果
+                        noticeConnectResult(isHasError);
                     }
                 }
-
-                isHasError = reTryConnect();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-
-                if (isHasError) {
-                    isHasError = reTryConnect();
-                }
             }
+        });
 
-            if (!isHasError) {
-                try {
-                    inputStream = bluetoothSocket.getInputStream();
-                    outputStream = bluetoothSocket.getOutputStream();
-                    currentDevice = device;
-
-                    registerBluetoothStateChangeReceiver();
-
-                    //到了这里，就已经连接成功了 所以，这里需要做mac保存
-                    String address = device.getAddress();
-                    SharedPreferencesUtil.setContentByKey("bluetooth_last_mac", address, context);
-                } catch (IOException e) {
-                    isHasError = true;
-                    e.printStackTrace();
-                }
-            }
-
-            //通知连接结果
-            noticeConnectResult(isHasError);
-        }
     }
 
     /**
@@ -520,8 +533,9 @@ public class BluetoothManager {
 
             String address = currentDevice.getAddress();
             BluetoothModel bluetoothModel = bluetoothModelMap.get(address);
-            bluetoothModel.setBluetoothState(BluetoothModel.PAIR);
-
+            if(bluetoothModel != null) {
+                bluetoothModel.setBluetoothState(BluetoothModel.PAIR);
+            }
             //通知，当前的连接关闭
             handler.post(new Runnable() {
                 @Override

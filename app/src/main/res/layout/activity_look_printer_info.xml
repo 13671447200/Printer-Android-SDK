@@ -18,7 +18,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
-                android:text="序列号：" />
+                android:text="Serial Number：" />
 
             <TextView
                 android:id="@+id/tv_look_printer_info_serial_number"
@@ -39,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
-                android:text="型号：" />
+                android:text="Model：" />
 
             <TextView
                 android:id="@+id/tv_look_printer_info_model"
@@ -59,7 +59,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
-                android:text="纸张状态：" />
+                android:text="Paper State：" />
 
             <TextView
                 android:id="@+id/tv_look_printer_info_paper_state"
@@ -79,7 +79,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
-                android:text="纸张类型：" />
+                android:text="Paper Type：" />
 
             <TextView
                 android:id="@+id/tv_look_printer_info_paper_type"
@@ -99,7 +99,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
-                android:text="指令类型：" />
+                android:text="CMD Type：" />
 
             <TextView
                 android:id="@+id/tv_look_printer_info_cmd_type"
@@ -108,6 +108,18 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_main_to_tspl_and_gap"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="TSPL and GAP" />
+
+        <Button
+            android:id="@+id/btn_main_to_esc_continue"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="ESC and continue" />
 
 
         <Button
@@ -138,6 +150,6 @@
             android:id="@+id/btn_main_to_continuity"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Receipt" />
+            android:text="Continue" />
     </LinearLayout>
 </ScrollView>

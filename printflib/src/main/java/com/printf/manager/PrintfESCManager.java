@@ -99,7 +99,6 @@ public class PrintfESCManager {
                         }
                         return;
                     }
-
                 }
                 if(multiplePrintfResultCallBack != null){
                     multiplePrintfResultCallBack.printfCompleteResult

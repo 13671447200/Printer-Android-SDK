@@ -1,14 +1,17 @@
 package com.printer.sdk;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
 
 import com.printf.interfaceCall.MultiplePrintfResultCallBack;
 import com.printf.manager.BluetoothManager;
@@ -19,7 +22,7 @@ import com.printf.utils.BarcodeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReceiptActivity extends Activity{
+public class ReceiptActivity extends Activity {
 
     private String TAG = "ReceiptActivity";
 
@@ -31,8 +34,26 @@ public class ReceiptActivity extends Activity{
         findViewById(R.id.btn_printf_one_barcode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PrintfESCManager.getInstance(ReceiptActivity.this)
-                        .printfBarcode(BarcodeUtil.BarcodeType.CODE128,2,162,2,"123456789");
+
+                final EditText inputServer = new EditText(ReceiptActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ReceiptActivity.this);
+                builder.setTitle("输入二维码内容").setIcon(android.R.drawable.ic_dialog_info).setView(inputServer)
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = inputServer.getText().toString();
+                        PrintfESCManager.getInstance(ReceiptActivity.this)
+                                .printfBarcode(BarcodeUtil.BarcodeType.CODE128, 6, 243, 2, text);
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -40,7 +61,7 @@ public class ReceiptActivity extends Activity{
             @Override
             public void onClick(View v) {
                 PrintfESCManager.getInstance(ReceiptActivity.this)
-                        .printfBarcode(BarcodeUtil.BarcodeType.QRCODE,2,162,0,"123456789");
+                        .printfBarcode(BarcodeUtil.BarcodeType.QRCODE, 2, 162, 0, "123456789");
             }
         });
 
@@ -104,7 +125,7 @@ public class ReceiptActivity extends Activity{
                 datas.add("标题二");
                 datas.add("标题三");
                 datass.add(datas);
-                for(int i = 0; i < datas.size(); i++){
+                for (int i = 0; i < datas.size(); i++) {
                     List<String> tempDatas = new ArrayList<>();
                     tempDatas.add("内容" + i + "1");
                     tempDatas.add("内容" + i + "2");
@@ -112,7 +133,7 @@ public class ReceiptActivity extends Activity{
                     datass.add(tempDatas);
                 }
                 PrintfESCManager.getInstance(ReceiptActivity.this)
-                        .printfTable(datass,72);
+                        .printfTable(datass, 72);
             }
         });
 
@@ -120,7 +141,7 @@ public class ReceiptActivity extends Activity{
             @Override
             public void onClick(View v) {
                 Bitmap bitmap = decodeResource(getResources(), R.mipmap.p_one_six);
-                PrintfESCManager.getInstance(ReceiptActivity.this).printfBitmapAsync(bitmap,0);
+                PrintfESCManager.getInstance(ReceiptActivity.this).printfBitmapAsync(bitmap, 0);
             }
         });
         findViewById(R.id.btn_printf_continuity_same_bitmap).setOnClickListener(new View.OnClickListener() {
@@ -132,17 +153,17 @@ public class ReceiptActivity extends Activity{
                         .printfBitmapsAsync(bitmap, 0, 3, new MultiplePrintfResultCallBack() {
                             @Override
                             public void printfIndexResult(int result, int group, int index) {
-                                Log.e(TAG,"一张图片连续打印，第" + group + "组的第" + index + "张的打印结果是" + result);
+                                Log.e(TAG, "一张图片连续打印，第" + group + "组的第" + index + "张的打印结果是" + result);
                             }
 
                             @Override
                             public void printfCompleteResult(int result) {
-                                Log.e(TAG,"一张图片连续打印，完成 结果是:" + result);
+                                Log.e(TAG, "一张图片连续打印，完成 结果是:" + result);
                             }
 
                             @Override
                             public void printfGroupCompleteResult(int group, int result) {
-                                Log.e(TAG,"一张图片连续打印，第" + group + "组完成 结果是:" + result);
+                                Log.e(TAG, "一张图片连续打印，第" + group + "组完成 结果是:" + result);
                             }
                         });
             }
@@ -154,19 +175,19 @@ public class ReceiptActivity extends Activity{
                 List<ESCPrinterModel> models = new ArrayList<>();
 
                 ESCPrinterModel escPrinterModel1 = new ESCPrinterModel();
-                escPrinterModel1.setBitmap(decodeResource(getResources(),R.mipmap.p_one_six));
+                escPrinterModel1.setBitmap(decodeResource(getResources(), R.mipmap.p_one_six));
                 escPrinterModel1.setLeft(0);
                 escPrinterModel1.setNumber(2);
                 models.add(escPrinterModel1);
 
                 ESCPrinterModel escPrinterModel2 = new ESCPrinterModel();
-                escPrinterModel2.setBitmap(decodeResource(getResources(),R.mipmap.p_one_six));
+                escPrinterModel2.setBitmap(decodeResource(getResources(), R.mipmap.p_one_six));
                 escPrinterModel2.setLeft(10);
                 escPrinterModel2.setNumber(3);
                 models.add(escPrinterModel2);
 
                 ESCPrinterModel escPrinterModel3 = new ESCPrinterModel();
-                escPrinterModel3.setBitmap(decodeResource(getResources(),R.mipmap.p_one_six));
+                escPrinterModel3.setBitmap(decodeResource(getResources(), R.mipmap.p_one_six));
                 escPrinterModel3.setLeft(30);
                 escPrinterModel3.setNumber(1);
                 models.add(escPrinterModel3);
@@ -175,17 +196,17 @@ public class ReceiptActivity extends Activity{
                         .printfESCPrinterModelAsync(models, new MultiplePrintfResultCallBack() {
                             @Override
                             public void printfIndexResult(int result, int group, int index) {
-                                Log.e(TAG,"多张图片连续打印，第" + group + "组的第" + index + "张的打印结果是" + result);
+                                Log.e(TAG, "多张图片连续打印，第" + group + "组的第" + index + "张的打印结果是" + result);
                             }
 
                             @Override
                             public void printfCompleteResult(int result) {
-                                Log.e(TAG,"多张图片连续打印，完成 结果是:" + result);
+                                Log.e(TAG, "多张图片连续打印，完成 结果是:" + result);
                             }
 
                             @Override
                             public void printfGroupCompleteResult(int group, int result) {
-                                Log.e(TAG,"多张图片连续打印，第" + group + "组完成 结果是:" + result);
+                                Log.e(TAG, "多张图片连续打印，第" + group + "组完成 结果是:" + result);
                             }
                         });
             }

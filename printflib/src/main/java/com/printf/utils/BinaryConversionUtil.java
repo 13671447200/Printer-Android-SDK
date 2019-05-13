@@ -16,5 +16,13 @@ public class BinaryConversionUtil {
         return new String(buf);
     }
 
+    public static String byteToHexFun(byte tempByte){
+        char[] buf = new char[2];
+        buf[0] = HEX_CHAR[tempByte >>> 4 & 0xf];
+        buf[1] = HEX_CHAR[tempByte & 0xf];
+        return new String(buf);
+    }
+
+
 
 }

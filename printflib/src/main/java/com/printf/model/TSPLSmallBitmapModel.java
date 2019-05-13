@@ -6,7 +6,7 @@ import android.graphics.PointF;
 /**
  * 小图打印的Model
  */
-public class PrintfModel {
+public class TSPLSmallBitmapModel {
 
     //小图的图片
     private Bitmap bitmap;
@@ -25,9 +25,9 @@ public class PrintfModel {
      *  说明 end
      **/
     //图片的宽 单位 mm
-    private int bitmapW;
+    private float bitmapW;
     //图片的高 单位 mm
-    private int bitmapH;
+    private float bitmapH;
     //旋转
     private int rotate = RotateAngle.ZERO_ANGLE;
     //旋转的点 当前这个点是null时，默认就是之图片的中点
@@ -75,19 +75,19 @@ public class PrintfModel {
         this.y = y;
     }
 
-    public int getBitmapW() {
+    public float getBitmapW() {
         return bitmapW;
     }
 
-    public void setBitmapW(int bitmapW) {
+    public void setBitmapW(float bitmapW) {
         this.bitmapW = bitmapW;
     }
 
-    public int getBitmapH() {
+    public float getBitmapH() {
         return bitmapH;
     }
 
-    public void setBitmapH(int bitmapH) {
+    public void setBitmapH(float bitmapH) {
         this.bitmapH = bitmapH;
     }
 

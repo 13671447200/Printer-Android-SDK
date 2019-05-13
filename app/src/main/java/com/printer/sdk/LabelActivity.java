@@ -13,7 +13,7 @@ import android.view.View;
 import com.printf.interfaceCall.MultiplePrintfResultCallBack;
 import com.printf.interfaceCall.PrintfResultCallBack;
 import com.printf.manager.PrintfTSPLManager;
-import com.printf.model.PrintfModel;
+import com.printf.model.TSPLSmallBitmapModel;
 import com.printf.model.TSPLPrinterModel;
 
 import java.util.ArrayList;
@@ -37,13 +37,13 @@ public class LabelActivity extends Activity {
                 tSPLPrinterModel.setPrintfDirection(TSPLPrinterModel.DirectionAngle.ZERO_ANGLE);
                 tSPLPrinterModel.setPrintfNumber(1);
 
-                PrintfModel printfModel = new PrintfModel();
-                printfModel.setBitmapH(50);
-                printfModel.setBitmap(bitmap);
-                printfModel.setBitmapW(48);
-                printfModel.setY(0);
-                printfModel.setX(0);
-                tSPLPrinterModel.addPrintfModel(printfModel);
+                TSPLSmallBitmapModel TSPLSmallBitmapModel = new TSPLSmallBitmapModel();
+                TSPLSmallBitmapModel.setBitmapH(50);
+                TSPLSmallBitmapModel.setBitmap(bitmap);
+                TSPLSmallBitmapModel.setBitmapW(48);
+                TSPLSmallBitmapModel.setY(0);
+                TSPLSmallBitmapModel.setX(0);
+                tSPLPrinterModel.addPrintfModel(TSPLSmallBitmapModel);
 
                 PrintfTSPLManager.getInstance(LabelActivity.this)
                         .printfLabelAsync(tSPLPrinterModel, new PrintfResultCallBack() {
@@ -72,13 +72,13 @@ public class LabelActivity extends Activity {
                     tSPLPrinterModel.setPrintfNumber(1);
 
                     Bitmap bitmap = decodeResource(getResources(), R.mipmap.p_one_six);
-                    PrintfModel printfModel = new PrintfModel();
-                    printfModel.setBitmapH(50);
-                    printfModel.setBitmap(bitmap);
-                    printfModel.setBitmapW(48);
-                    printfModel.setY(0);
-                    printfModel.setX(0);
-                    tSPLPrinterModel.addPrintfModel(printfModel);
+                    TSPLSmallBitmapModel TSPLSmallBitmapModel = new TSPLSmallBitmapModel();
+                    TSPLSmallBitmapModel.setBitmapH(50);
+                    TSPLSmallBitmapModel.setBitmap(bitmap);
+                    TSPLSmallBitmapModel.setBitmapW(48);
+                    TSPLSmallBitmapModel.setY(0);
+                    TSPLSmallBitmapModel.setX(0);
+                    tSPLPrinterModel.addPrintfModel(TSPLSmallBitmapModel);
                     tSPLPrinterModels.add(tSPLPrinterModel);
                 }
                 PrintfTSPLManager.getInstance(LabelActivity.this)

@@ -32,6 +32,18 @@ public class MainActivity extends Activity {
             }
         });
 
+        findViewById(R.id.btn_main_test_apl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!BluetoothManager.getInstance(MainActivity.this).isConnect()){
+                    ToastUtils.ToastText(MainActivity.this,"请先连接蓝牙");
+                    return;
+                }
+                Intent intent = new Intent(MainActivity.this, APLActivity.class);
+                startActivity(intent);
+            }
+        });
+
         findViewById(R.id.btn_main_test_label).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +84,18 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,BluetoothActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.btn_main_send_content).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!BluetoothManager.getInstance(MainActivity.this).isConnect()){
+                    ToastUtils.ToastText(MainActivity.this,"请先连接蓝牙");
+                    return;
+                }
+                Intent intent = new Intent(MainActivity.this,SendContentActivity.class);
                 startActivity(intent);
             }
         });

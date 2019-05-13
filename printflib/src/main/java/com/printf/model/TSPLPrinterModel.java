@@ -12,7 +12,7 @@ public class TSPLPrinterModel {
     //打印方向
     private int printfDirection = DirectionAngle.ZERO_ANGLE;
     //打印的model
-    List<PrintfModel> printfModels = new ArrayList<>();
+    List<TSPLSmallBitmapModel> TSPLSmallBitmapModels = new ArrayList<>();
 
     // MM与PX的转化比率 默认是8
     private int MM_TO_PX = 8;
@@ -25,8 +25,8 @@ public class TSPLPrinterModel {
         this.MM_TO_PX = MM_TO_PX;
     }
 
-    public void addPrintfModel(PrintfModel printfModel){
-        printfModels.add(printfModel);
+    public void addPrintfModel(TSPLSmallBitmapModel TSPLSmallBitmapModel){
+        TSPLSmallBitmapModels.add(TSPLSmallBitmapModel);
     }
 
     //当前标签的打印数量
@@ -64,12 +64,12 @@ public class TSPLPrinterModel {
         this.printfDirection = printfDirection;
     }
 
-    public List<PrintfModel> getPrintfModels() {
-        return printfModels;
+    public List<TSPLSmallBitmapModel> getTSPLSmallBitmapModels() {
+        return TSPLSmallBitmapModels;
     }
 
-    public void setPrintfModels(List<PrintfModel> printfModels) {
-        this.printfModels = printfModels;
+    public void setTSPLSmallBitmapModels(List<TSPLSmallBitmapModel> TSPLSmallBitmapModels) {
+        this.TSPLSmallBitmapModels = TSPLSmallBitmapModels;
     }
 
     public static class DirectionAngle{

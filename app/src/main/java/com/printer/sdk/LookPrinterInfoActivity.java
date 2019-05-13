@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.printf.manager.PrintfInfoManager;
 import com.printf.model.PrinterInfo;
 
-public class LookPrinterInfoActivity extends Activity{
+public class LookPrinterInfoActivity extends Activity {
 
     //序列号
     private TextView tv_look_printer_info_serial_number;
@@ -38,6 +38,10 @@ public class LookPrinterInfoActivity extends Activity{
             @Override
             public void getComplete() {
 
+            }
+
+            @Override
+            public void getSuccess() {
                 PrintfInfoManager printfInfoManager = PrintfInfoManager.getInstance(LookPrinterInfoActivity.this);
                 PrinterInfo printerInfo =
                         printfInfoManager.getPrinterInfo();
@@ -49,10 +53,57 @@ public class LookPrinterInfoActivity extends Activity{
                 tv_look_printer_info_paper_type.setText(String.valueOf(printerInfo.getPaperType()));
 
                 tv_look_printer_info_cmd_type.setText(String.valueOf(printerInfo.getCmdType()));
+            }
 
+            @Override
+            public void getError(int error) {
+                ToastUtils.ToastText("获得打印机信息错误",LookPrinterInfoActivity.this);
             }
         });
 
+        findViewById(R.id.btn_main_to_tspl_and_gap).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrintfInfoManager.getInstance(LookPrinterInfoActivity.this)
+                        .changeCMDToTSPLAsync(new PrintfInfoManager.ChangeCMDTypeCallBack() {
+                            @Override
+                            public void result(int result) {
+                                toastResult(result,"tspl");
+                                Log.e("TAG", "To GAP result:" + result);
+                                PrintfInfoManager.getInstance(LookPrinterInfoActivity.this)
+                                        .changePaperToGAPPaperAsync(new PrintfInfoManager.ChangePaperTypeCallBack() {
+                                            @Override
+                                            public void result(int result) {
+                                                toastResult(result,"gap");
+                                                Log.e("TAG", "To GAP result:" + result);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
+
+        findViewById(R.id.btn_main_to_esc_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrintfInfoManager.getInstance(LookPrinterInfoActivity.this)
+                        .changeCMDToESCAsync(new PrintfInfoManager.ChangeCMDTypeCallBack() {
+                            @Override
+                            public void result(int result) {
+                                toastResult(result,"esc");
+                                Log.e("TAG", "To ESC result:" + result);
+                                PrintfInfoManager.getInstance(LookPrinterInfoActivity.this)
+                                        .changePaperToContinuityPaperAsync(new PrintfInfoManager.ChangePaperTypeCallBack() {
+                                            @Override
+                                            public void result(int result) {
+                                                toastResult(result ,"continue");
+                                                Log.e("TAG", "To Continuity result:" + result);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
 
         findViewById(R.id.btn_main_to_tspl).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,9 +112,7 @@ public class LookPrinterInfoActivity extends Activity{
                         .changeCMDToTSPLAsync(new PrintfInfoManager.ChangeCMDTypeCallBack() {
                             @Override
                             public void result(int result) {
-
-                                toastResult(result);
-
+                                toastResult(result,"tspl");
                                 Log.e("TAG", "To TSPL result:" + result);
                             }
                         });
@@ -77,7 +126,7 @@ public class LookPrinterInfoActivity extends Activity{
                         .changeCMDToESCAsync(new PrintfInfoManager.ChangeCMDTypeCallBack() {
                             @Override
                             public void result(int result) {
-                                toastResult(result);
+                                toastResult(result,"esc");
                                 Log.e("TAG", "To ESC result:" + result);
                             }
                         });
@@ -91,7 +140,7 @@ public class LookPrinterInfoActivity extends Activity{
                         .changeCMDToCPCLAsync(new PrintfInfoManager.ChangeCMDTypeCallBack() {
                             @Override
                             public void result(int result) {
-                                toastResult(result);
+                                toastResult(result , "cpcl");
                                 Log.e("TAG", "To CPCL result:" + result);
                             }
                         });
@@ -105,7 +154,7 @@ public class LookPrinterInfoActivity extends Activity{
                         .changePaperToGAPPaperAsync(new PrintfInfoManager.ChangePaperTypeCallBack() {
                             @Override
                             public void result(int result) {
-                                toastResult(result);
+                                toastResult(result , "gap");
                                 Log.e("TAG", "To GAP result:" + result);
                             }
                         });
@@ -119,7 +168,7 @@ public class LookPrinterInfoActivity extends Activity{
                         .changePaperToContinuityPaperAsync(new PrintfInfoManager.ChangePaperTypeCallBack() {
                             @Override
                             public void result(int result) {
-                                toastResult(result);
+                                toastResult(result,"continuity");
                                 Log.e("TAG", "To Continuity result:" + result);
                             }
                         });
@@ -130,11 +179,11 @@ public class LookPrinterInfoActivity extends Activity{
     /**
      * 切换结果
      */
-    private void toastResult(int result){
+    private void toastResult(int result,String content){
         if(result == 1){
-            ToastUtils.ToastText(LookPrinterInfoActivity.this,"切换成功");
+            ToastUtils.ToastText(LookPrinterInfoActivity.this,"切换" + content + "成功");
         }else{
-            ToastUtils.ToastText(LookPrinterInfoActivity.this,"切换失败");
+            ToastUtils.ToastText(LookPrinterInfoActivity.this,"切换" + content + "失败");
         }
     }
 
