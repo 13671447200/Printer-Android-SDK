@@ -1,8 +1,25 @@
 package com.printf.utils;
 
 import android.content.Context;
+import android.os.Environment;
 
 public class ParameterUtil {
+
+    public static float PX_TO_MM = 8;
+
+    /**
+     * 当前的模式
+     */
+    public static boolean isDebug = true;
+
+    /**
+     * 得到当前的sdk根目录
+     */
+    public static String getSDKRoot(){
+        String path = Environment.getExternalStoragePublicDirectory("")
+                + "/mht.sdk/";
+        return path;
+    }
 
     public static class TowValuedType{
         //无

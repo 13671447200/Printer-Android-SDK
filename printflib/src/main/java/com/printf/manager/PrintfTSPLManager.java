@@ -3,13 +3,18 @@ package com.printf.manager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+<<<<<<< HEAD
 import android.os.Environment;
+=======
+import android.util.Log;
+>>>>>>> 8f7eef1... 增加了ESC的打印位置选择，增加图片居中居右，增加打印结果回调
 
 import com.printf.interfaceCall.MultiplePrintfResultCallBack;
 import com.printf.interfaceCall.PrintfResultCallBack;
 import com.printf.model.TSPLPrinterModel;
 import com.printf.model.TSPLSmallBitmapModel;
 import com.printf.utils.ImageUtil;
+import com.printf.utils.ParameterUtil;
 import com.printf.utils.Util;
 
 import java.io.File;
@@ -135,9 +140,42 @@ public class PrintfTSPLManager {
                 rotatePoint.y = (top + bitmapHMM / 2);
             }
 
+<<<<<<< HEAD
+=======
+            //这里需要做一下判断，与打印方向与旋转方向一样，假如打印方向与旋转方向求余如果 是 90 或者 270 则高度需要向求整
+            //如果不是，宽度需要向上
+            if(printfDirection + rotate % 360 == 90 || printfDirection + rotate % 360 == 270){
+                float number = bitmapHMM % (int)bitmapHMM;
+                if(number != 0f) {
+                    int temp = (int) bitmapHMM + 1;
+                    bitmapHMM = temp;
+                }
+            }else{
+                float number = bitmapWMM % (int)bitmapWMM;
+                if(number != 0f) {
+                    int temp = (int) bitmapWMM + 1;
+                    bitmapWMM = temp;
+                }
+            }
+
+            //有些图片，因为精度的问题，导致了改变之后的宽或者高并没有达到8的倍数，
+            //所以，这里做两步处理，一是先处理尺寸，再处理旋转角度，这样会使不是8的倍数的情况少出现
+>>>>>>> 8f7eef1... 增加了ESC的打印位置选择，增加图片居中居右，增加打印结果回调
             Bitmap bitmap = ImageUtil.handleBitmap(tSPLSmallBitmapModel.getBitmap(),
                     bitmapWMM * tSPLPrinterModel.getMM_TO_PX(),
-                    bitmapHMM * tSPLPrinterModel.getMM_TO_PX(), rotate + printfDirection + 180);
+                    bitmapHMM * tSPLPrinterModel.getMM_TO_PX(), 0);
+            bitmap = ImageUtil.handleBitmap(bitmap,
+                    bitmapWMM * tSPLPrinterModel.getMM_TO_PX(),
+                    bitmapHMM * tSPLPrinterModel.getMM_TO_PX(),
+                    rotate + printfDirection + 180);
+
+
+            if(ParameterUtil.isDebug){
+                String path = ParameterUtil.getSDKRoot();
+                String savePath = ImageUtil.saveBitmap(bitmap,"printfBitmap.png",path);
+                Log.e("TAG","我是保存图片的保存路径：" + savePath);
+            }
+
             //求出四个点
             PointF leftTopPoint = new PointF(left, top);
             PointF rightTopPoint = new PointF(left + bitmapWMM, top);
@@ -200,8 +238,6 @@ public class PrintfTSPLManager {
             PointF usePoint = null;
             if (rotate == TSPLSmallBitmapModel.RotateAngle.NINETY_ANGLE) {
                 usePoint = leftBottomPoint;
-            } else if (rotate == TSPLSmallBitmapModel.RotateAngle.ONE_HUNDRED_EIGHTY) {
-                usePoint = rightBottomPoint;
             } else if (rotate == TSPLSmallBitmapModel.RotateAngle.TOW_HUNDRED_SEVENTY) {
                 usePoint = rightTopPoint;
             } else {
@@ -231,6 +267,12 @@ public class PrintfTSPLManager {
                 newLabelH = labelH;
                 newLabelW = labelW;
             }
+            if(ParameterUtil.isDebug) {
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                Log.e("TAG", "我是图片保存之前的宽高 width:" + width + " height:" + height);
+                Log.e("TAG", "我是图片的毫米宽高 mm H:" + newBitmapH + " mm W:" + newBitmapW);
+            }
             tSPLSmallBitmapModel.setBitmap(bitmap);
             tSPLSmallBitmapModel.setX(newLabelW - (usePoint.x + newBitmapW));
             tSPLSmallBitmapModel.setY(newLabelH - (usePoint.y + newBitmapH));
@@ -255,56 +297,66 @@ public class PrintfTSPLManager {
      *                                     2:打印成功
      */
     private void printfLabel(final TSPLPrinterModel tSPLPrinterModel1, final PrintfResultCallBack printfResultCallBack) {
+        synchronized(BluetoothManager.class) {
 
-        if (tSPLPrinterModel1 == null) {
-            if (printfResultCallBack != null) {
-                printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_PARAMETER_ERROR);
+            if (tSPLPrinterModel1 == null) {
+                if (printfResultCallBack != null) {
+                    printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_PARAMETER_ERROR);
+                }
+                return;
             }
-            return;
-        }
 
-        if (!bluetoothManager.isConnect()) {
-            if (printfResultCallBack != null) {
-                printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_BLUETOOTH);
+            if (!bluetoothManager.isConnect()) {
+                if (printfResultCallBack != null) {
+                    printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_BLUETOOTH);
+                }
+                return;
             }
-            return;
-        }
 
+<<<<<<< HEAD
         TSPLPrinterModel TSPLPrinterModel = handleLabelPrinterModel(tSPLPrinterModel1);
         //初始化画布
         initCanvas(TSPLPrinterModel.getLabelW(), TSPLPrinterModel.getLabelH());
         clearCanvas();
+=======
+            TSPLPrinterModel TSPLPrinterModel = handleLabelPrinterModel(tSPLPrinterModel1);
 
-        List<TSPLSmallBitmapModel> TSPLSmallBitmapModels = TSPLPrinterModel.getTSPLSmallBitmapModels();
-        for (int i = 0; i < TSPLSmallBitmapModels.size(); i++) {
-            TSPLSmallBitmapModel TSPLSmallBitmapModel = TSPLSmallBitmapModels.get(i);
-            int x = (int) (TSPLSmallBitmapModel.getX() * TSPLPrinterModel.getMM_TO_PX());
-            int y = (int) (TSPLSmallBitmapModel.getY() * TSPLPrinterModel.getMM_TO_PX());
-            printBitmap(x, y, TSPLSmallBitmapModel.getBitmap(), TSPLSmallBitmapModel.getThreshold());
+            //初始化画布
+            initCanvas(TSPLPrinterModel.getLabelW(), TSPLPrinterModel.getLabelH());
+            clearCanvas();
+>>>>>>> 8f7eef1... 增加了ESC的打印位置选择，增加图片居中居右，增加打印结果回调
+
+            List<TSPLSmallBitmapModel> TSPLSmallBitmapModels = TSPLPrinterModel.getTSPLSmallBitmapModels();
+            for (int i = 0; i < TSPLSmallBitmapModels.size(); i++) {
+                TSPLSmallBitmapModel TSPLSmallBitmapModel = TSPLSmallBitmapModels.get(i);
+                int x = (int) (TSPLSmallBitmapModel.getX() * TSPLPrinterModel.getMM_TO_PX());
+                int y = (int) (TSPLSmallBitmapModel.getY() * TSPLPrinterModel.getMM_TO_PX());
+                printBitmap(x, y, TSPLSmallBitmapModel.getBitmap(), TSPLSmallBitmapModel.getThreshold());
+            }
+
+            beginPrintf(1, TSPLPrinterModel.getPrintfNumber());
+
+            PrintfInfoManager.getInstance(context).getPrinterPaperState(new PrintfInfoManager.GetPrinterCmdCallBack() {
+                @Override
+                public void getComplete() {
+
+                }
+
+                @Override
+                public void getError(int error) {
+                    if (printfResultCallBack != null) {
+                        printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_CMD_ERROR);
+                    }
+                }
+
+                @Override
+                public void getSuccess() {
+                    if (printfResultCallBack != null) {
+                        printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_SUCCESS);
+                    }
+                }
+            });
         }
-
-        beginPrintf(1, TSPLPrinterModel.getPrintfNumber());
-
-        PrintfInfoManager.getInstance(context).getPrinterPaperState(new PrintfInfoManager.GetPrinterCmdCallBack() {
-            @Override
-            public void getComplete() {
-
-            }
-
-            @Override
-            public void getError(int error) {
-                if (printfResultCallBack != null) {
-                    printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_CMD_ERROR);
-                }
-            }
-
-            @Override
-            public void getSuccess() {
-                if (printfResultCallBack != null) {
-                    printfResultCallBack.callBack(PrintfResultCallBack.PRINTF_RESULT_SUCCESS);
-                }
-            }
-        });
     }
 
     public void printfLabelAsync(final TSPLPrinterModel tSPLPrinterModel1, final PrintfResultCallBack printfResultCallBack){

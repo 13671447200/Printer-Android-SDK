@@ -3,10 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_receipt_printf_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="打印一张小票"/>
 
         <Button
             android:id="@+id/btn_receipt_test_table"
@@ -73,5 +79,12 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="测试二维码打印" />
+
+        <Button
+            android:id="@+id/btn_printf_select_position"
+            android:text="选择打印位置"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
     </LinearLayout>
 </ScrollView>

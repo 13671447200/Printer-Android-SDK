@@ -1,17 +1,18 @@
 package com.printer.sdk;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.EditText;
 
 import com.printf.interfaceCall.MultiplePrintfResultCallBack;
 import com.printf.manager.BluetoothManager;
@@ -26,34 +27,108 @@ public class ReceiptActivity extends Activity {
 
     private String TAG = "ReceiptActivity";
 
+    private Context context;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receipt_test);
 
+        context = this;
+
+        findViewById(R.id.btn_printf_select_position).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final PrintfESCManager printfESCManager = PrintfESCManager.getInstance(context);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setIcon(R.mipmap.ic_launcher);
+                builder.setTitle("选择打印位置");
+                //    指定下拉列表的显示数据
+                final String[] cities = {"居左", "居中", "居右"};
+                //    设置一个下拉的列表选择项
+                builder.setItems(cities, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        printfESCManager.setShowPosition(which);
+                        printfESCManager.printfText("123456\n");
+                        Bitmap bitmap = decodeResource(getResources(), R.mipmap.ic_launcher);
+                        int effectiveWidth = 48;
+                        int i = printfESCManager.printfBitmap(bitmap, 10, 10, effectiveWidth, 2);
+                        printfESCManager.printfText("\n");
+                        ToastUtils.ToastText(context,"i：" + i);
+                    }
+                });
+                builder.show();
+            }
+        });
+
+        findViewById(R.id.btn_receipt_printf_sheet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                PrintfESCManager printfESCManager = PrintfESCManager.getInstance(context);
+                Bitmap bitmap = decodeResource(getResources(), R.mipmap.p_one_six);
+                int effectiveWidth = 48;
+                printfESCManager.printfBitmap(bitmap,10,10,effectiveWidth,3);
+
+                printfESCManager.printfText("\n");
+
+                List<List<String>> datass = new ArrayList<>();
+                List<String> datas = new ArrayList<String>();
+                datas.add("标题一");
+                datas.add("标题二");
+                datas.add("标题三");
+                datass.add(datas);
+                for (int i = 0; i < 15; i++) {
+                    List<String> tempDatas = new ArrayList<>();
+                    tempDatas.add("内容" + i + "1");
+                    tempDatas.add("内容" + i + "2");
+                    tempDatas.add("内容" + i + "3");
+                    datass.add(tempDatas);
+                }
+                printfESCManager.printfTable(datass, effectiveWidth);
+
+                printfESCManager.printPlusLine(effectiveWidth);
+
+                printfESCManager.getLastPrintfResult(new PrintfESCManager.PrintfResultCallBack() {
+                    @Override
+                    public void callBack(int result) {
+                        ToastUtils.ToastText(context,"result:" + result);
+                    }
+                });
+            }
+        });
+
+
         findViewById(R.id.btn_printf_one_barcode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final EditText inputServer = new EditText(ReceiptActivity.this);
-                AlertDialog.Builder builder = new AlertDialog.Builder(ReceiptActivity.this);
-                builder.setTitle("输入二维码内容").setIcon(android.R.drawable.ic_dialog_info).setView(inputServer)
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                PrintfESCManager.getInstance(ReceiptActivity.this)
+                        .printfBarcode(BarcodeUtil.BarcodeType.CODE128, 2, 150, 2, "123456");
 
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String text = inputServer.getText().toString();
-                        PrintfESCManager.getInstance(ReceiptActivity.this)
-                                .printfBarcode(BarcodeUtil.BarcodeType.CODE128, 6, 243, 2, text);
-                    }
-                });
-                builder.show();
+//                final EditText inputServer = new EditText(ReceiptActivity.this);
+//                inputServer.setText("123456");
+//                AlertDialog.Builder builder = new AlertDialog.Builder(ReceiptActivity.this);
+//                builder.setTitle("输入二维码内容").setIcon(android.R.drawable.ic_dialog_info).setView(inputServer)
+//                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//
+//                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        String text = inputServer.getText().toString();
+//                        PrintfESCManager.getInstance(ReceiptActivity.this)
+//                                .printfBarcode(BarcodeUtil.BarcodeType.CODE128, 2, 150, 2, text);
+//                    }
+//                });
+//                builder.show();
             }
         });
 
@@ -61,7 +136,7 @@ public class ReceiptActivity extends Activity {
             @Override
             public void onClick(View v) {
                 PrintfESCManager.getInstance(ReceiptActivity.this)
-                        .printfBarcode(BarcodeUtil.BarcodeType.QRCODE, 2, 162, 0, "123456789");
+                        .printfBarcode(BarcodeUtil.BarcodeType.QRCODE, 2, 3, 6, "123456789");
             }
         });
 
@@ -133,7 +208,7 @@ public class ReceiptActivity extends Activity {
                     datass.add(tempDatas);
                 }
                 PrintfESCManager.getInstance(ReceiptActivity.this)
-                        .printfTable(datass, 72);
+                        .printfTable(datass, 48);
             }
         });
 
@@ -219,6 +294,29 @@ public class ReceiptActivity extends Activity {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inTargetDensity = value.density;
         return BitmapFactory.decodeResource(resources, id, opts);
+    }
+
+    /**
+     * 设置图片宽高
+     *
+     * @param bm
+     * @param newWidth
+     * @param newHeight
+     * @return
+     */
+    public Bitmap setImgSize(Bitmap bm, int newWidth, int newHeight) {
+        // 获得图片的宽高.
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        // 计算缩放比例.
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 取得想要缩放的matrix参数.
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        // 得到新的图片.
+        Bitmap newbm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+        return newbm;
     }
 
 }
